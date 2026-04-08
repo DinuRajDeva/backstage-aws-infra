@@ -1,24 +1,41 @@
+# ECS module
 output "ecs_cluster_id" {
-  description = "ECS cluster ID."
-  value       = aws_ecs_cluster.this.id
+  value = module.ecs.cluster_id
 }
 
 output "ecs_cluster_arn" {
-  description = "ECS cluster ARN."
-  value       = aws_ecs_cluster.this.arn
+  value = module.ecs.cluster_arn
 }
 
-output "task_definition_arn" {
-  description = "Task definition ARN (latest revision)."
-  value       = aws_ecs_task_definition.app.arn
+output "ecs_task_definition_arn" {
+  value = module.ecs.task_definition_arn
 }
 
-output "task_execution_role_arn" {
-  description = "IAM role ARN used by ECS to pull images and write logs."
-  value       = aws_iam_role.task_execution.arn
+output "ecs_task_execution_role_arn" {
+  value = module.ecs.task_execution_role_arn
 }
 
-output "cloudwatch_log_group_name" {
-  description = "Log group for container stdout/stderr."
-  value       = aws_cloudwatch_log_group.task.name
+output "ecs_cloudwatch_log_group_name" {
+  value = module.ecs.cloudwatch_log_group_name
+}
+
+# RDS module
+output "rds_endpoint" {
+  value = module.rds_postgres.endpoint
+}
+
+output "rds_port" {
+  value = module.rds_postgres.port
+}
+
+output "rds_database_name" {
+  value = module.rds_postgres.database_name
+}
+
+output "rds_security_group_id" {
+  value = module.rds_postgres.security_group_id
+}
+
+output "rds_instance_arn" {
+  value = module.rds_postgres.instance_arn
 }

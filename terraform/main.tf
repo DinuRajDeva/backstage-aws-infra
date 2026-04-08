@@ -1,70 +1,34 @@
-data "aws_caller_identity" "current" {}
+module "ecs" {
+  source = "./modules/ecs"
 
-resource "aws_ecs_cluster" "this" {
-  name = "${var.project_name}-cluster"
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
+  project_name       = var.project_name
+  aws_region         = var.aws_region
+  ecr_image_uri      = var.ecr_image_uri
+  task_cpu           = var.task_cpu
+  task_memory        = var.task_memory
+  container_port     = var.container_port
+  log_retention_days = var.log_retention_days
+  container_name     = var.container_name
 }
 
-resource "aws_cloudwatch_log_group" "task" {
-  name              = "/ecs/${var.project_name}"
-  retention_in_days = var.log_retention_days
-}
+module "rds_postgres" {
+  source = "./modules/rds-postgres"
 
-resource "aws_iam_role" "task_execution" {
-  name = "${var.project_name}-ecs-task-execution"
+  project_name = var.project_name
+  vpc_id       = var.vpc_id
+  subnet_ids   = var.rds_subnet_ids
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
+  allowed_security_group_ids = var.rds_allowed_security_group_ids
+  allowed_cidr_blocks        = var.rds_allowed_cidr_blocks
 
-resource "aws_iam_role_policy_attachment" "task_execution" {
-  role       = aws_iam_role.task_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
+  db_name           = var.rds_db_name
+  master_username   = var.rds_master_username
+  master_password   = var.rds_master_password
+  engine_version    = var.rds_engine_version
+  instance_class    = var.rds_instance_class
+  allocated_storage = var.rds_allocated_storage
 
-resource "aws_ecs_task_definition" "app" {
-  family                   = "${var.project_name}-app"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  cpu                      = var.task_cpu
-  memory                   = var.task_memory
-  execution_role_arn       = aws_iam_role.task_execution.arn
-
-  container_definitions = jsonencode([
-    {
-      name      = "app"
-      image     = var.ecr_image_uri
-      essential = true
-
-      portMappings = [
-        {
-          containerPort = var.container_port
-          protocol      = "tcp"
-        }
-      ]
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.task.name
-          "awslogs-region"        = var.aws_region
-          "awslogs-stream-prefix" = "ecs"
-        }
-      }
-    }
-  ])
+  backup_retention_period = var.rds_backup_retention_period
+  skip_final_snapshot     = var.rds_skip_final_snapshot
+  publicly_accessible     = var.rds_publicly_accessible
 }
