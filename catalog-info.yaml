@@ -4,6 +4,7 @@ metadata:
   name: backstage-aws-infra
   annotations:
     github.com/project-slug: DinuRajDeva/backstage-aws-infra
+    aws.amazon.com/amazon-ecr-arn: arn:aws:ecr:ap-south-1:923801260899:repository/backstage-test-12345
 spec:
   type: other
   lifecycle: unknown
