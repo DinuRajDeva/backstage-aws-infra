@@ -5,7 +5,7 @@ metadata:
   annotations:
     github.com/project-slug: DinuRajDeva/backstage-aws-infra
     aws.amazon.com/amazon-ecr-arn: arn:aws:ecr:ap-south-1:923801260899:repository/backstage-test-12345
-    backstage.io/managed-by-origin-location: url: "https://github.com/DinuRajDeva/backstage-aws-infra/blob/main/README.md"
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: other
   lifecycle: unknown
