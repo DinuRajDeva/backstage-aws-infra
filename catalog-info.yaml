@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage-aws-infra
+  annotations:
+    github.com/project-slug: DinuRajDeva/backstage-aws-infra
+spec:
+  type: other
+  lifecycle: unknown
+  owner: guests
